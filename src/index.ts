@@ -3,6 +3,7 @@ import App from "./App"
 import {getFirestore, connectFirestoreEmulator} from 'firebase/firestore'
 import {getDatabase, connectDatabaseEmulator} from 'firebase/database'
 import {getAuth, connectAuthEmulator} from 'firebase/auth'
+import {getFunctions, connectFunctionsEmulator} from 'firebase/functions'
 import {createRoot} from 'react-dom/client'
 import {createElement} from 'react'
 
@@ -15,16 +16,18 @@ fetch('/__/firebase/init.json').then(async configRes => {
     const firestore = getFirestore(app)
     const database = getDatabase(app)
     const auth = getAuth(app)
+    const functions = getFunctions(app)
 
     if (window.location.hostname === "localhost") {
         connectFirestoreEmulator(firestore, location.hostname, 8080)
         connectDatabaseEmulator(database, location.hostname, 9000)
         connectAuthEmulator(auth, "http://localhost:9099")
+        connectFunctionsEmulator(functions, "localhost", 5001)
         firebaseConfig.databaseURL = "http://localhost:9000/?ns=lezsak-email"
     }
 
     const root = createRoot(document.getElementById('root'))
-    root.render(createElement(App, {app, firestore, database, auth}))
+    root.render(createElement(App, {app, firestore, database, auth, functions}))
 }).catch(e => {
     console.error(e)
     document.getElementById('root').innerHTML = "Could not load application<br>" + e

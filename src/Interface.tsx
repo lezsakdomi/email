@@ -1,17 +1,28 @@
 import * as React from 'react'
 import {MdSend} from 'react-icons/md'
-import {useRef, useState} from 'react'
+import {useMemo, useRef, useState} from 'react'
 import {Editor} from '@tinymce/tinymce-react'
 import {User} from 'firebase/auth'
+import {Functions, httpsCallable, HttpsCallable} from 'firebase/functions'
+import tinymce from 'tinymce'
 
 const addAddressMessage = "At the moment you can add a new address only by logging in using a new account with that address"
 
-export default function Interface({enabled, user}: {enabled: boolean, user?: User}): JSX.Element {
+export default function Interface({enabled, user, functions}: {
+    enabled: boolean;
+    user?: User;
+    functions: Functions;
+}): JSX.Element {
     const labelMinWidth = '4em'
     const [isSending, setIsSending] = useState<boolean>(false)
     const formRef = useRef<HTMLFormElement>()
     const fromRef = useRef<HTMLSelectElement>()
     const bccRef = useRef<HTMLInputElement>()
+    const send = useMemo<HttpsCallable>(() => {
+        return httpsCallable(functions, 'send')
+    }, [functions])
+    const [result, setResult] = useState(undefined)
+    const [error, setError] = useState(undefined)
 
     return (
         <form
@@ -26,15 +37,25 @@ export default function Interface({enabled, user}: {enabled: boolean, user?: Use
                 flexGrow: 1,
                 color: enabled ? 'black' : 'grey',
             }}
-            onSubmit={event => {
+            onSubmit={async event => {
                 event.preventDefault()
                 // @ts-ignore
                 tinymce.triggerSave()
                 const data = [...formRef.current.elements as unknown as HTMLInputElement[]]
                     .filter(e => e.name)
-                    .reduce((a, v) => Object.assign(a, {[v.name]: v.value}), {})
-                console.log(data)
+                    .reduce((a, v) => Object.assign(a, {[v.name]: v.value}), {});
+
                 setIsSending(true)
+                try {
+                    const result = await send(data);
+                    setResult({email: data, result})
+                    setError(undefined)
+                    tinymce.activeEditor.resetContent()
+                } catch (e) {
+                    setResult(undefined)
+                    setError(e)
+                }
+                setIsSending(false)
             }}
         >
             <div
@@ -236,6 +257,38 @@ export default function Interface({enabled, user}: {enabled: boolean, user?: Use
                     <MdSend/> Send
                 </button>
             </div>
+            {result && <details
+				style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    marginTop: '1em',
+                }}
+			>
+                <summary>✅ Email sent</summary>
+                {result?.result?.data?.result[0]?.statusCode === 202 ? <div style={{
+                    marginTop: '1em',
+                    border: '1px solid black',
+                    borderRadius: '5px',
+                    padding: '1em',
+                }} dangerouslySetInnerHTML={{__html: result.email.html}}></div> : <pre style={{
+                    whiteSpace: 'pre-wrap',
+                }}>{
+                    JSON.stringify(result, null, 4)
+                }</pre>}
+            </details>}
+            {error && <details
+                open
+				style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    marginTop: '1em',
+                }}
+			>
+                <summary style={{color: 'red'}}>Error: <b>{error.message}</b></summary>
+                <pre style={{whiteSpace: 'pre-wrap'}}>{
+                    error.details && error.details.sgError || JSON.stringify(error.details, null, 4)
+                }</pre>
+            </details>}
         </form>
     )
 }
