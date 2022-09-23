@@ -36,6 +36,7 @@ export default class extends Component<{ auth: Auth, userChanged: (user: User) =
         }, this.handleError)
     }
 
+    // noinspection JSUnusedLocalSymbols
     handleSuccess({user}: { user?: User }) {
         this.setState({error: undefined})
         // this.setState({user, error: undefined})
