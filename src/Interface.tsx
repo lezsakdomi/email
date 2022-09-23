@@ -186,7 +186,7 @@ export default function Interface({enabled, user, functions}: {
                 />
             </div>
             <Editor
-                tinymceScriptSrc="tinymce/tinymce.min.js"
+                tinymceScriptSrc="/tinymce/tinymce.min.js"
                 textareaName="html"
                 disabled={!enabled || isSending}
                 init={{
@@ -214,6 +214,7 @@ export default function Interface({enabled, user, functions}: {
                         })
                         input.click()
                     },
+                    base_url: '/tinymce'
                 }}
             />
             <div
