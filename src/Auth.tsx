@@ -94,7 +94,7 @@ export default class extends Component<{ auth: Auth, userChanged: (user: User) =
                             event.preventDefault()
                             const email = prompt("Please enter your email address\n" +
                                 "Note: You will be able to send emails from this address",
-                                "@" + location.hostname)
+                                "@" + location.hostname.replace(/^email\./, ''))
                             if (email === null) return
                             const url = new URL(location.href)
                             url.searchParams.set("linkAccount", this.state.user ? "1" : "")
@@ -152,7 +152,8 @@ export default class extends Component<{ auth: Auth, userChanged: (user: User) =
                             signInAnonymously(this.props.auth)
                                 .then(this.handleSuccess, this.handleError)
                         }}
-                        disabled={!!this.state.user}
+                        // disabled={!!this.state.user}
+                        disabled={true}
                         style={{
                             ...buttonStyle,
                             marginLeft: 'auto',
