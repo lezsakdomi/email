@@ -92,7 +92,9 @@ export default class extends Component<{ auth: Auth, userChanged: (user: User) =
                     <button
                         onClick={event => {
                             event.preventDefault()
-                            const email = prompt("Please enter your email address")
+                            const email = prompt("Please enter your email address\n" +
+                                "Note: You will be able to send emails from this address",
+                                "@" + location.hostname)
                             if (email === null) return
                             const url = new URL(location.href)
                             url.searchParams.set("linkAccount", this.state.user ? "1" : "")

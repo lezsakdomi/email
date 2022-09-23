@@ -118,6 +118,7 @@ export default function Interface({enabled, user, functions}: {
                 <input
                     name="to"
                     disabled={!enabled || isSending}
+                    required
                     style={{
                         flexGrow: 1,
                     }}
@@ -180,6 +181,7 @@ export default function Interface({enabled, user, functions}: {
                 <input
                     name="subject"
                     disabled={!enabled || isSending}
+                    required
                     style={{
                         flexGrow: 1,
                     }}
