@@ -1,15 +1,18 @@
 import * as React from 'react'
 import {MdSend} from 'react-icons/all'
 import {useRef, useState} from 'react'
+import {Editor} from '@tinymce/tinymce-react'
 
 export default function Interface({enabled}: {enabled: boolean}): JSX.Element {
     const labelMinWidth = '4em'
     const [isSending, setIsSending] = useState<boolean>(false)
+    const formRef = useRef<HTMLFormElement>()
     const fromRef = useRef<HTMLSelectElement>()
     const bccRef = useRef<HTMLInputElement>()
 
     return (
         <form
+            ref={formRef}
             style={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -18,10 +21,16 @@ export default function Interface({enabled}: {enabled: boolean}): JSX.Element {
                 padding: '1em',
                 marginTop: '1em',
                 flexGrow: 1,
+                color: enabled ? 'black' : 'grey',
             }}
             onSubmit={event => {
                 event.preventDefault()
-                console.log(event)
+                // @ts-ignore
+                tinymce.triggerSave()
+                const data = [...formRef.current.elements as unknown as HTMLInputElement[]]
+                    .filter(e => e.name)
+                    .reduce((a, v) => Object.assign(a, {[v.name]: v.value}), {})
+                console.log(data)
                 setIsSending(true)
             }}
         >
@@ -151,13 +160,35 @@ export default function Interface({enabled}: {enabled: boolean}): JSX.Element {
                     }}
                 />
             </div>
-            <textarea
-                name="text"
+            <Editor
+                tinymceScriptSrc="tinymce/tinymce.min.js"
+                textareaName="html"
                 disabled={!enabled || isSending}
-                style={{
-                    flexGrow: 1,
-                    resize: 'none',
-                    minHeight: '200px',
+                init={{
+                    plugins: [
+                        "image",
+                        "table",
+                        "link",
+                        "autolink",
+                        "save",
+                        "autosave",
+                    ],
+                    file_picker_callback: function(callback, value, meta) {
+                        const input = document.createElement('input')
+                        input.type = 'file'
+                        if (meta.filetype === 'image') {
+                            input.accept = "image/*"
+                        }
+                        input.addEventListener('input', () => {
+                            const reader = new FileReader()
+                            reader.readAsDataURL(input.files[0])
+                            reader.addEventListener('load', () => {
+                                const url = reader.result as string;
+                                callback(url)
+                            })
+                        })
+                        input.click()
+                    },
                 }}
             />
             <div

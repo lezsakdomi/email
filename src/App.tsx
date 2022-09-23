@@ -15,7 +15,6 @@ export default function App({app, firestore, database, auth}: { app: FirebaseApp
             style={{
                 display: 'flex',
                 flexDirection: 'column',
-                height: 'calc(100vh - 2 * 8px)',
             }}
         >
             <AuthComponent auth={auth} userChanged={setUser}/>

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "rollup --config",
+    "build": "cp -r node_modules/tinymce public; rollup --config",
     "watch": "rollup --config --watch",
     "emulate": "firebase emulators:start"
   },
@@ -11,10 +11,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@tinymce/tinymce-react": "^4.2.0",
     "firebase": "^9.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-icons": "^4.4.0"
+    "react-icons": "^4.4.0",
+    "tinymce": "^6.2.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^22.0.2",
