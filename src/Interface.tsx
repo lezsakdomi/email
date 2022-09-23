@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {MdSend} from 'react-icons/all'
+import {MdSend} from 'react-icons/md'
 import {useRef, useState} from 'react'
 import {Editor} from '@tinymce/tinymce-react'
 

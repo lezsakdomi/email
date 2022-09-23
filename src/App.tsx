@@ -7,6 +7,7 @@ import {Auth, User} from 'firebase/auth'
 import AuthComponent from './Auth'
 import Interface from './Interface'
 
+// noinspection JSUnusedLocalSymbols
 export default function App({app, firestore, database, auth}: { app: FirebaseApp, firestore: Firestore, database: Database, auth: Auth }): JSX.Element {
     const [user, setUser] = useState<User>()
 
