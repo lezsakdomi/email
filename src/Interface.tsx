@@ -86,7 +86,19 @@ export default function Interface({enabled, user, functions}: {
                     }}
                     disabled={!enabled || isSending}
                 >
-                    {user && user.providerData.map(provider =>
+                    {user && user.providerData.sort((a, b) => {
+                        let result = 0;
+
+                        if (a.email.split('.').reverse()[0] == 'hu') {
+                            result -= 1;
+                        }
+
+                        if (b.email.split('.').reverse()[0] == 'hu') {
+                            result += 1;
+                        }
+
+                        return result;
+                    }).map(provider =>
                         <option key={provider.uid}>
                             {provider.email}
                         </option>,
