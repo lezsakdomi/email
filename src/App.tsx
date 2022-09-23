@@ -19,7 +19,7 @@ export default function App({app, firestore, database, auth}: { app: FirebaseApp
             }}
         >
             <AuthComponent auth={auth} userChanged={setUser}/>
-            <Interface enabled={!!user}/>
+            <Interface user={user} enabled={!!user}/>
         </main>
     )
 }

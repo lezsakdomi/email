@@ -2,8 +2,11 @@ import * as React from 'react'
 import {MdSend} from 'react-icons/md'
 import {useRef, useState} from 'react'
 import {Editor} from '@tinymce/tinymce-react'
+import {User} from 'firebase/auth'
 
-export default function Interface({enabled}: {enabled: boolean}): JSX.Element {
+const addAddressMessage = "At the moment you can add a new address only by logging in using a new account with that address"
+
+export default function Interface({enabled, user}: {enabled: boolean, user?: User}): JSX.Element {
     const labelMinWidth = '4em'
     const [isSending, setIsSending] = useState<boolean>(false)
     const formRef = useRef<HTMLFormElement>()
@@ -52,13 +55,9 @@ export default function Interface({enabled}: {enabled: boolean}): JSX.Element {
                     onChange={event => {
                         if (event.target.value === "") {
                             event.preventDefault();
-                            const email = prompt("Please provide the new email address");
-                            if (email) {
-                                alert("Adding new email address to database")
-                            } else {
-                                // @ts-ignore
-                                event.target.value = event.target.lastValue || event.target.children[0].value;
-                            }
+                            alert(addAddressMessage)
+                            // @ts-ignore
+                            event.target.value = event.target.lastValue || event.target.children[0].value;
                         } else {
                             // @ts-ignore
                             event.target.lastValue = event.target.value;
@@ -66,9 +65,14 @@ export default function Interface({enabled}: {enabled: boolean}): JSX.Element {
                     }}
                     disabled={!enabled || isSending}
                 >
-                    <option>email1</option>
-                    <option>email2</option>
+                    {user && user.providerData.map(provider =>
+                        <option key={provider.uid}>
+                            {provider.email}
+                        </option>,
+                    )}
                     <option
+                        disabled
+                        title={addAddressMessage}
                         value=""
                         style={{
                             fontStyle: 'italic',
