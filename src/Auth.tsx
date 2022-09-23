@@ -103,7 +103,7 @@ export default class extends Component<{ auth: Auth, userChanged: (user: User) =
                                 handleCodeInApp: true,
                             }).then(() => {
                                 window.localStorage.setItem('emailForSignIn', email)
-                                alert("Close this page and check your inbox")
+                                alert("Close this page and check your inbox and/or spam folder")
                             }).catch(this.handleError)
                         }}
                         disabled={!!this.state.user}
