@@ -8,12 +8,14 @@ import postcss from 'rollup-plugin-postcss';
 import {terser} from 'rollup-plugin-terser';
 
 /**
- * @type {import('rollup').RollupOptions}
+ * @type {() => import('rollup').RollupOptions}
  */
-const config = {
+export default commandLineArgs => ({
+	treeshake: commandLineArgs.watch ? false : undefined,
 	input: 'src/index.ts',
 	output: {
 		file: 'public/bundle.js',
+		minifyInternalExports: commandLineArgs.watch ? false : undefined,
 		sourcemap: true,
 		format: 'iife',
 	},
@@ -29,8 +31,6 @@ const config = {
 		typescript({tsconfig: './tsconfig.json'}),
 		json(),
 		postcss(),
-		terser(),
+		commandLineArgs.watch ? undefined : terser(),
 	],
-};
-
-export default config;
+})
