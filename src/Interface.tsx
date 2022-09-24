@@ -74,6 +74,7 @@ export default function Interface({enabled, user, functions}: {
                     marginRight: '0.5em',
                     display: 'inline-block',
                     minWidth: labelMinWidth,
+                    fontWeight: 'bold',
                 }}>From:</label>
                 <select
                     ref={fromRef}
@@ -131,6 +132,7 @@ export default function Interface({enabled, user, functions}: {
                     marginRight: '0.5em',
                     display: 'inline-block',
                     minWidth: labelMinWidth,
+                    fontWeight: 'bold',
                 }}>To:</label>
                 <input
                     name="to"
@@ -194,6 +196,7 @@ export default function Interface({enabled, user, functions}: {
                     marginRight: '0.5em',
                     display: 'inline-block',
                     minWidth: labelMinWidth,
+                    fontWeight: 'bold',
                 }}>Subject:</label>
                 <input
                     name="subject"
