@@ -5,6 +5,7 @@ import {Editor} from '@tinymce/tinymce-react'
 import {User} from 'firebase/auth'
 import {Functions, httpsCallable, HttpsCallable} from 'firebase/functions'
 import tinymce from 'tinymce'
+import {Attachments} from './Attachments'
 
 const addAddressMessage = "At the moment you can add a new address only by logging in using a new account with that address"
 
@@ -23,6 +24,7 @@ export default function Interface({enabled, user, functions}: {
     }, [functions])
     const [result, setResult] = useState(undefined)
     const [error, setError] = useState(undefined)
+    const [attachments, setAttachments] = useState([])
 
     return (
         <form
@@ -45,12 +47,15 @@ export default function Interface({enabled, user, functions}: {
                     .filter(e => e.name)
                     .reduce((a, v) => Object.assign(a, {[v.name]: v.value}), {});
 
+                data['attachments'] = attachments;
+
                 setIsSending(true)
                 try {
                     const result = await send(data);
                     setResult({email: data, result})
                     setError(undefined)
                     tinymce.activeEditor.resetContent()
+                    setAttachments([])
                 } catch (e) {
                     setResult(undefined)
                     setError(e)
@@ -231,6 +236,7 @@ export default function Interface({enabled, user, functions}: {
                     base_url: '/tinymce'
                 }}
             />
+            <Attachments enabled={enabled} attachments={attachments} setAttachments={setAttachments}/>
             <div
                 style={{
                     display: 'flex',
@@ -280,12 +286,15 @@ export default function Interface({enabled, user, functions}: {
                 }}
 			>
                 <summary>✅ Email sent</summary>
-                {result?.result?.data?.result[0]?.statusCode === 202 ? <div style={{
-                    marginTop: '1em',
-                    border: '1px solid black',
-                    borderRadius: '5px',
-                    padding: '1em',
-                }} dangerouslySetInnerHTML={{__html: result.email.html}}></div> : <pre style={{
+                {result?.result?.data?.result[0]?.statusCode === 202 ? <div>
+                    <div style={{
+                        marginTop: '1em',
+                        border: '1px solid black',
+                        borderRadius: '5px',
+                        padding: '1em',
+                    }} dangerouslySetInnerHTML={{__html: result.email.html}}/>
+                    <Attachments enabled={false} attachments={result.email.attachments} setAttachments={() => {}}/>
+                </div> : <pre style={{
                     whiteSpace: 'pre-wrap',
                 }}>{
                     JSON.stringify(result, null, 4)
